@@ -7,7 +7,9 @@ android {
   }
 }
 
-apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
+// REMOVED: capacitor-cordova-android-plugins not used
+// apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
+
 dependencies {
 
 
