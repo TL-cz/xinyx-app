@@ -9,110 +9,40 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
+          node-version: '20'
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: zulu
+          java-version: '17'
+          distribution: 'zulu'
 
-      - name: Install dependencies
+      - name: npm install
         run: npm install
         working-directory: apps/xinyx-app
 
-      - name: Add Android platform
+      - name: cap add android
         run: npx cap add android
         working-directory: apps/xinyx-app
 
-      - name: Sync web assets
+      - name: cap sync
         run: npx cap sync
         working-directory: apps/xinyx-app
 
-      - name: Generate debug keystore (for signing)
-        run: |
-          keytool -genkeypair -v \
-            -keystore android/app/release.keystore \
-            -alias release \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass android -keypass android \
-            -dname "CN=xinyx, OU=tps, O=xinyx, L=Shanghai, ST=Shanghai, C=CN" \
-            2>&1 || true
-          echo "--- keystore generated ---"
-        working-directory: apps/xinyx-app
-
-      - name: Patch build.gradle with release signing
-        run: |
-          python3 -c "
-          import re
-          gradle = open('android/app/build.gradle').read()
-          patch = '''
-android {
-    signingConfigs {
-        release {
-            storeFile file(\"release.keystore\")
-            storePassword \"android\"
-            keyAlias \"release\"
-            keyPassword \"android\"
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-        }
-    }
-}
-'''
-          if 'signingConfigs' not in gradle:
-              # 找 android { 块, 在里面追加 signingConfigs 和 buildTypes
-              m = re.search(r'android\s*\{([^}]+)\}', gradle)
-              if m:
-                  insert_pos = m.end() - 1  # 末尾 } 前
-                  before = gradle[:insert_pos]
-                  after = gradle[insert_pos:]
-                  new_block = '''
-    signingConfigs {
-        release {
-            storeFile file(\"release.keystore\")
-            storePassword \"android\"
-            keyAlias \"release\"
-            keyPassword \"android\"
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-        }
-    }
-'''
-                  gradle = before + new_block + after
-              open('android/app/build.gradle','w').write(gradle)
-              print('patched!')
-          else:
-              print('already patched, skip')
-          "
-        working-directory: apps/xinyx-app
-
-      - name: Make gradlew executable
+      - name: chmod gradlew
         run: chmod +x android/gradlew
+        working-directory: apps/xinyx-app
 
-      - name: Build release APK
-        run: ./gradlew assembleRelease --no-daemon
+      - name: gradle assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
         working-directory: apps/xinyx-app/android
 
-      - name: Verify APK
-        run: ls -la apps/xinyx-app/android/app/build/outputs/apk/release/
-
-      - name: Upload APK artifact
+      - name: upload apk
         uses: actions/upload-artifact@v4
         with:
-          name: xinyx-release-apk
-          path: apps/xinyx-app/android/app/build/outputs/apk/release/app-release.apk
+          name: xinyx-debug-apk
+          path: apps/xinyx-app/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 90
