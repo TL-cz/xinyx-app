@@ -10,20 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          lfs: true
 
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
 
-      - name: chmod gradlew
-        run: chmod +x gradlew
-        working-directory: apps/xinyx-app/android
-
-      - name: gradle assembleDebug
-        run: ./gradlew assembleDebug --no-daemon
+      - name: build debug apk
+        run: |
+          sed -i 's/\r$//' gradlew
+          bash gradlew assembleDebug --no-daemon
         working-directory: apps/xinyx-app/android
 
       - name: upload apk
