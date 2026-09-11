@@ -45,7 +45,7 @@ public class MainActivity extends BridgeActivity implements SensorEventListener 
     private Sensor rotationSensor;
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (sensorManager != null && rotationSensor != null) {
             sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
@@ -53,7 +53,7 @@ public class MainActivity extends BridgeActivity implements SensorEventListener 
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         if (sensorManager != null) sensorManager.unregisterListener(this);
     }
