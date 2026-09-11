@@ -99,6 +99,18 @@
 把 `icon-192.png` 和 `icon-512.png` 放到 `src/` 下 (任意 PNG)。
 `cap sync` 时 Capacitor 会自动生成 Android 各尺寸。
 
+## 🔢 版本号规则（重要）
+
+**每次改壳后重新构建，版本号必须递增**，否则安卓拒绝覆盖安装。已做成 CI 全自动：
+
+- 触发构建时，workflow 自动把 `versionCode` 设为 GitHub 运行号（全局单调递增，当前约 #20）
+- `versionName` 自动变成 `1.0.<运行号>`，例如 `1.0.20`
+- 产物 APK 自动命名为 `xinyx-v1.0.20.apk`，Artifacts 包名 `xinyx-apk-v20`
+- App 启动时弹 Toast 显示壳版本（读 BuildConfig，无需手改）
+- 本地基线：`android/app/build.gradle` 里 `versionCode 1` / `versionName "1.0.0"`，只在本地构建时用，CI 会覆盖
+
+**游戏本体（服务器上的 H5）更新不需要发新 APK**，朋友打开 App 自动加载最新版。只有改壳（图标/加载地址/原生配置）才需要重新构建分发。
+
 ## ⚠️ 注意
 
 - **WebView 版本**: 需要 Android System WebView ≥ 87 (约 2021 年后的手机)。启动页有 WebView 版本检测, 太旧会提示升级。

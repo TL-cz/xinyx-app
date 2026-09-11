@@ -24,15 +24,29 @@ jobs:
           echo "JAVA_HOME=$JAVA_HOME"
           ls $ANDROID_HOME/platforms || echo "no platforms"
 
+      - name: bump version
+        # 每次构建版本号自动递增：
+        # versionCode = GitHub 运行号(全局单调递增, 保证覆盖安装合法)
+        # versionName = 1.0.<运行号>
+        run: |
+          sed -i "s/versionCode 1/versionCode ${GITHUB_RUN_NUMBER}/" app/build.gradle
+          sed -i "s/versionName \"1.0.0\"/versionName \"1.0.${GITHUB_RUN_NUMBER}\"/" app/build.gradle
+          grep -E "versionCode|versionName" app/build.gradle
+        working-directory: android
+
       - name: build apk
         run: |
           sed -i 's/\r$//' gradlew
           bash gradlew assembleDebug --no-daemon --stacktrace
         working-directory: android
 
+      - name: rename apk with version
+        run: cp app/build/outputs/apk/debug/app-debug.apk xinyx-v1.0.${GITHUB_RUN_NUMBER}.apk
+        working-directory: android
+
       - name: upload apk
         uses: actions/upload-artifact@v4
         with:
-          name: xinyx-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: xinyx-apk-v${{ github.run_number }}
+          path: android/xinyx-v1.0.*.apk
           retention-days: 90
