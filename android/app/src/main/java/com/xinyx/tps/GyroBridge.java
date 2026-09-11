@@ -40,4 +40,15 @@ public class GyroBridge {
         ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("xinyx", text));
     }
+
+    /** 清除 WebView HTTP 缓存（不动 Cookie/localStorage，登录态保留），清完游戏侧自行 reload */
+    @JavascriptInterface
+    public void clearHttpCache() {
+        activity.runOnUiThread(() -> {
+            try {
+                activity.getBridge().getWebView().clearCache(true);
+            } catch (Exception ignored) {
+            }
+        });
+    }
 }
