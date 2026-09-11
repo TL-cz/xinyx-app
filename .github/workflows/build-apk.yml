@@ -16,10 +16,18 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
-      - name: build debug apk
+      - uses: android-actions/setup-android@v3
+
+      - name: debug env
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "JAVA_HOME=$JAVA_HOME"
+          ls $ANDROID_HOME/platforms || echo "no platforms"
+
+      - name: build apk
         run: |
           sed -i 's/\r$//' gradlew
-          bash gradlew assembleDebug --no-daemon
+          bash gradlew assembleDebug --no-daemon --stacktrace
         working-directory: apps/xinyx-app/android
 
       - name: upload apk
