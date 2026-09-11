@@ -10,31 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          lfs: true
 
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
 
-      - name: npm install
-        run: npm install --no-audit --no-fund
-        working-directory: apps/xinyx-app
-
-      - name: cap add android
-        run: npx cap add android
-        working-directory: apps/xinyx-app
-
-      - name: cap sync
-        run: npx cap sync
-        working-directory: apps/xinyx-app
-
       - name: chmod gradlew
-        run: chmod +x android/gradlew
-        working-directory: apps/xinyx-app
+        run: chmod +x gradlew
+        working-directory: apps/xinyx-app/android
 
       - name: gradle assembleDebug
         run: ./gradlew assembleDebug --no-daemon
