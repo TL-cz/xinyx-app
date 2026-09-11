@@ -1,0 +1,20 @@
+{
+  "name": "xinyx-app",
+  "version": "1.0.0",
+  "description": "xinyx-tps 射击游戏 Android 壳 (Capacitor)",
+  "private": true,
+  "scripts": {
+    "cap": "cap",
+    "android": "npx cap add android",
+    "sync": "npx cap sync",
+    "open": "npx cap open android",
+    "build:release": "cd android && .\\gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}

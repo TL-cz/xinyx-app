@@ -1,0 +1,22 @@
+{
+  "appId": "com.xinyx.tps",
+  "appName": "xinyx射击",
+  "android": {
+    "backgroundColor": "#0d121c"
+  },
+  "server": {
+    "url": "http://8.134.192.185:4000",
+    "originalUrl": "http://8.134.192.185:4000"
+  },
+  "androidConfiguration": {
+    "orientation": "landscape",
+    "immersiveWebViewEnabled": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0d121c",
+      "showSpinner": false
+    }
+  }
+}
