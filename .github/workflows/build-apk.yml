@@ -21,9 +21,7 @@ jobs:
           distribution: 'zulu'
 
       - name: npm install
-        run: |
-          npm config set registry https://registry.npmmirror.com
-          npm install --no-audit --no-fund --loglevel=error
+        run: npm install --no-audit --no-fund
         working-directory: apps/xinyx-app
 
       - name: cap add android
